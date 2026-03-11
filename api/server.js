@@ -3,7 +3,7 @@
 // Club Municipal de Ajedrez de Alcalá de Henares
 // ============================================
 
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
@@ -27,28 +27,43 @@ cloudinary.config({
 });
 
 // Firebase Admin (soporta archivo local o variable de entorno para Vercel)
+let db;
 if (!admin.apps.length) {
     try {
+        let serviceAccount;
         if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-            // En producción (Vercel), leemos desde variable de entorno
-            const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+            console.log('📡 Intentando inicializar Firebase desde variable de entorno...');
+            try {
+                serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+            } catch (jsonErr) {
+                console.error('❌ Error parsing FIREBASE_SERVICE_ACCOUNT JSON:', jsonErr.message);
+                // Si falla el parseo, intentamos cargarlo de nuevo pero limpiando posibles escapes mal hechos
+                try {
+                    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g, '\n'));
+                } catch (e2) {
+                    throw new Error('Formato JSON de FIREBASE_SERVICE_ACCOUNT inválido');
+                }
+            }
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
             });
-            console.log('✅ Firebase inicializado desde variable de entorno');
+            console.log('✅ Firebase inicializado correctamente (Vercel)');
         } else {
-            // En local, leemos desde el archivo JSON
-            const serviceAccount = require(path.join(__dirname, '..', 'firebase-adminsdk.json'));
+            console.log('🏠 Buscando archivo local firebase-adminsdk.json...');
+            serviceAccount = require(path.join(__dirname, '..', 'firebase-adminsdk.json'));
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
             });
-            console.log('✅ Firebase inicializado desde archivo local');
+            console.log('✅ Firebase inicializado correctamente (Local)');
         }
+        db = admin.firestore();
     } catch (e) {
-        console.error('❌ Error inicializando Firebase:', e.message);
+        console.error('❌ Error crítico inicializando Firebase:', e.message);
+        // No lanzamos error para que el servidor no pete, pero db será undefined
     }
+} else {
+    db = admin.firestore();
 }
-const db = admin.firestore();
 
 // Ruta de la colección de noticias (misma que usa la web pública)
 const NOTICIAS_COLLECTION = 'artifacts/ajedrez-alcala-app-v2/public/data/noticias';
@@ -77,15 +92,30 @@ const upload = multer({
 // 3. RUTAS
 // ============================================
 
-// --- Redirección raíz a admin ---
-app.get('/', (req, res) => {
-    res.redirect('/admin');
+// --- Diagnóstico de salud ---
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        firebaseInit: !!db,
+        env: {
+            hasGeminiKey: !!process.env.GEMINI_API_KEY,
+            hasFirebaseKey: !!process.env.FIREBASE_SERVICE_ACCOUNT,
+            hasCloudinaryKey: !!process.env.CLOUDINARY_CLOUD_NAME,
+            hasAdminPassword: !!process.env.ADMIN_PASSWORD,
+            nodeEnv: process.env.NODE_ENV || 'development'
+        }
+    });
 });
 
-// --- Servir el panel de administración ---
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'admin.html'));
-});
+// --- Servir admin.html solo en desarrollo local ---
+if (process.env.NODE_ENV !== 'production') {
+    app.get('/', (req, res) => {
+        res.redirect('/admin');
+    });
+    app.get('/admin', (req, res) => {
+        res.sendFile(path.join(__dirname, '..', 'admin.html'));
+    });
+}
 
 // --- Verificar contraseña ---
 app.post('/api/login', (req, res) => {
