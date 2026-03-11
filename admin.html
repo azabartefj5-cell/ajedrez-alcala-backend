@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Noticias — Club de Ajedrez Alcalá</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --granate: #7a1f2b;
+      --granate-dark: #5f1821;
+      --granate-light: #9a2a39;
+      --oro: #b38b59;
+      --oro-dark: #8e6b42;
+      --marfil: #f5f1ea;
+      --pizarra: #22252a;
+      --bg: #f0ece4;
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+      --red-500: #ef4444;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-full: 9999px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--pizarra);
+      min-height: 100vh;
+    }
+
+    /* ============ LOGIN SCREEN ============ */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--pizarra) 0%, #2d3138 100%);
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: slideUp 0.6s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--granate), var(--granate-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 36px;
+      color: white;
+      box-shadow: 0 8px 24px rgba(122, 31, 43, 0.3);
+    }
+
+    .login-card h1 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.5rem;
+      color: var(--pizarra);
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: var(--transition);
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .login-input:focus {
+      outline: none;
+      border-color: var(--granate);
+      box-shadow: 0 0 0 4px rgba(122, 31, 43, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px 24px;
+      margin-top: 16px;
+      background: linear-gradient(135deg, var(--granate), var(--granate-dark));
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(122, 31, 43, 0.3);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-error {
+      color: var(--red-500);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ============ MAIN PANEL ============ */
+    #mainPanel {
+      display: none;
+    }
+
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 32px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--granate), var(--granate-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+    }
+
+    .topbar-brand h2 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .topbar-brand span {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-success {
+      background: #ecfdf5;
+      color: var(--green-600);
+      border: 1px solid #bbf7d0;
+    }
+
+    .btn-logout {
+      padding: 8px 16px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-logout:hover {
+      background: var(--gray-200);
+    }
+
+    /* ============ CONTENT LAYOUT ============ */
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h3 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .card-header .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--oro), var(--oro-dark));
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    /* ============ FORM CONTROLS ============ */
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-select,
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: var(--gray-50);
+      transition: var(--transition);
+      color: var(--pizarra);
+    }
+
+    .form-select:focus,
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--granate);
+      box-shadow: 0 0 0 4px rgba(122, 31, 43, 0.08);
+      background: var(--white);
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: var(--gray-50);
+      transition: var(--transition);
+      color: var(--pizarra);
+      min-height: 200px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.78rem;
+      color: var(--gray-400);
+      margin-top: 4px;
+    }
+
+    /* ============ DROPZONE ============ */
+    .dropzone {
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--gray-50);
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--granate);
+      background: rgba(122, 31, 43, 0.03);
+    }
+
+    .dropzone-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+
+    .dropzone-text {
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-hint {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .preview-item {
+      position: relative;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: var(--gray-100);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      line-height: 1;
+    }
+
+    .preview-remove:hover {
+      background: var(--red-500);
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn-generate {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, var(--granate), var(--granate-dark));
+      color: white;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-generate:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(122, 31, 43, 0.3);
+    }
+
+    .btn-generate:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-publish {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, var(--green-500), var(--green-600));
+      color: white;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-publish:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn-publish:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      padding: 12px 20px;
+      background: var(--white);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      color: var(--gray-600);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--granate);
+      color: var(--granate);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-row .btn-publish {
+      flex: 1;
+    }
+
+    .btn-row .btn-secondary {
+      flex: 0 0 auto;
+    }
+
+    /* ============ PROGRESS ============ */
+    .progress-container {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .progress-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-100);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gray-400);
+      transition: var(--transition);
+    }
+
+    .progress-step.active {
+      background: rgba(122, 31, 43, 0.05);
+      border-color: rgba(122, 31, 43, 0.15);
+      color: var(--granate);
+    }
+
+    .progress-step.done {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+      color: var(--green-600);
+    }
+
+    .step-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .progress-step .step-icon {
+      background: var(--gray-200);
+      color: var(--gray-400);
+    }
+
+    .progress-step.active .step-icon {
+      background: var(--granate);
+      color: white;
+      animation: pulse 1.5s ease infinite;
+    }
+
+    .progress-step.done .step-icon {
+      background: var(--green-500);
+      color: white;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(122, 31, 43, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px rgba(122, 31, 43, 0);
+      }
+    }
+
+    /* ============ PREVIEW PANEL ============ */
+    .preview-panel {
+      display: none;
+    }
+
+    /* Error display */
+    .error-display {
+      display: none;
+      padding: 24px;
+      margin: 16px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm);
+      color: #991b1b;
+    }
+
+    .error-display h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .error-display pre {
+      background: #fff;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* Timer */
+    .timer-text {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      font-weight: 600;
+    }
+
+    .preview-empty {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--gray-400);
+    }
+
+    .preview-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    .preview-empty h4 {
+      font-family: 'Merriweather', serif;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+    }
+
+    .preview-empty p {
+      font-size: 0.85rem;
+    }
+
+    /* ============ EDIT MODE BANNER ============ */
+    .edit-mode-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, rgba(179, 139, 89, 0.12), rgba(179, 139, 89, 0.05));
+      border-bottom: 1px solid rgba(179, 139, 89, 0.2);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--oro-dark);
+    }
+
+    .edit-mode-banner .edit-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .edit-mode-banner .edit-hint svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.7;
+    }
+
+    /* ============ ARTICLE PREVIEW — PREMIUM ============ */
+    .article-preview {
+      padding: 0;
+    }
+
+    /* Header section with gradient accent */
+    .ap-header {
+      position: relative;
+      padding: 36px 32px 28px;
+      background: linear-gradient(180deg, rgba(122, 31, 43, 0.04) 0%, transparent 100%);
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .ap-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--granate), var(--oro), var(--granate));
+    }
+
+    .article-preview .ap-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: linear-gradient(135deg, rgba(179, 139, 89, 0.15), rgba(179, 139, 89, 0.05));
+      color: var(--oro-dark);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border-radius: 20px;
+      border: 1px solid rgba(179, 139, 89, 0.25);
+      margin-bottom: 16px;
+    }
+
+    .article-preview .ap-title {
+      font-family: 'Merriweather', serif;
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: var(--pizarra);
+      line-height: 1.25;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .article-preview .ap-excerpt {
+      font-size: 1.08rem;
+      color: var(--gray-500);
+      line-height: 1.65;
+      border-left: 3px solid var(--oro);
+      padding: 12px 0 12px 20px;
+      margin-bottom: 0;
+      font-style: italic;
+      background: linear-gradient(90deg, rgba(179, 139, 89, 0.04), transparent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* Editable fields */
+    .editable {
+      position: relative;
+      cursor: text;
+      transition: all 0.2s ease;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .editable:hover {
+      background: rgba(179, 139, 89, 0.06);
+    }
+
+    .editable:focus {
+      background: rgba(179, 139, 89, 0.08);
+      box-shadow: inset 0 0 0 2px var(--oro);
+      padding: 6px 10px;
+      margin: -6px -10px;
+    }
+
+    .editable-label {
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--oro);
+      background: var(--white);
+      padding: 0 6px;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+    }
+
+    .editable:focus + .editable-label,
+    .editable:hover + .editable-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Article body */
+    .ap-body-wrap {
+      padding: 32px;
+    }
+
+    .article-preview .ap-body {
+      font-size: 1.02rem;
+      line-height: 1.85;
+      color: var(--gray-600);
+    }
+
+    .article-preview .ap-body p {
+      margin-bottom: 1.4em;
+    }
+
+    .article-preview .ap-body p:first-child::first-letter {
+      font-family: 'Merriweather', serif;
+      font-size: 3.2em;
+      float: left;
+      line-height: 0.85;
+      padding-right: 10px;
+      padding-top: 4px;
+      color: var(--granate);
+      font-weight: 900;
+    }
+
+    .article-preview .ap-body h3 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--granate);
+      margin-top: 2.2em;
+      margin-bottom: 0.9em;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(122, 31, 43, 0.1);
+    }
+
+    .article-preview .ap-body strong {
+      color: var(--pizarra);
+      font-weight: 700;
+    }
+
+    .article-preview .ap-body blockquote {
+      border-left: 4px solid var(--oro);
+      padding: 20px 24px;
+      background: linear-gradient(135deg, rgba(179, 139, 89, 0.06), rgba(179, 139, 89, 0.02));
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+      color: var(--granate-dark);
+      margin: 2em 0;
+      position: relative;
+      font-size: 1.05rem;
+    }
+
+    .article-preview .ap-body blockquote::before {
+      content: '\201C';
+      position: absolute;
+      top: -8px;
+      left: 16px;
+      font-size: 3rem;
+      color: var(--oro);
+      opacity: 0.3;
+      font-family: 'Merriweather', serif;
+    }
+
+    /* Article images — Premium */
+    .article-preview .ap-body .article-image {
+      margin: 2em 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      background: var(--gray-100);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .article-preview .ap-body .article-image:hover {
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .article-preview .ap-body .article-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .article-preview .ap-body .article-image:hover img {
+      transform: scale(1.03);
+    }
+
+    .article-preview .ap-body .article-image figcaption {
+      padding: 14px 20px;
+      font-size: 0.82rem;
+      color: var(--gray-500);
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gray-50), var(--white));
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .article-preview .ap-body .article-image figcaption::before {
+      content: '📷';
+      font-style: normal;
+      font-size: 0.9rem;
+    }
+
+    /* Image gallery — Elegant grid */
+    .article-preview .ap-body .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 2em 0;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--gray-50), rgba(179, 139, 89, 0.03));
+      border-radius: 20px;
+      border: 1px solid var(--gray-100);
+    }
+
+    .article-preview .ap-body .image-gallery .article-image {
+      margin: 0;
+      border-radius: 12px;
+    }
+
+    /* Results table — Premium */
+    .article-preview .ap-body .results-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 2em 0;
+      font-size: 0.88rem;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--gray-100);
+    }
+
+    .article-preview .ap-body .results-table thead {
+      background: linear-gradient(135deg, var(--granate), var(--granate-dark));
+    }
+
+    .article-preview .ap-body .results-table th {
+      padding: 14px 18px;
+      color: white;
+      font-weight: 700;
+      text-align: left;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.8px;
+    }
+
+    .article-preview .ap-body .results-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--gray-100);
+      transition: background 0.2s ease;
+    }
+
+    .article-preview .ap-body .results-table tbody tr:nth-child(even) {
+      background: var(--gray-50);
+    }
+
+    .article-preview .ap-body .results-table tbody tr:hover td {
+      background: rgba(122, 31, 43, 0.04);
+    }
+
+    .article-preview .ap-body .results-table tbody tr:first-child td {
+      font-weight: 700;
+      color: var(--oro-dark);
+    }
+
+    /* Prizes block — Premium */
+    .article-preview .ap-body .prizes-block {
+      background: linear-gradient(135deg, rgba(179, 139, 89, 0.1), rgba(179, 139, 89, 0.03));
+      border: 1px solid rgba(179, 139, 89, 0.2);
+      border-radius: 16px;
+      padding: 28px;
+      margin: 2em 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .article-preview .ap-body .prizes-block::before {
+      content: '🏆';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 5rem;
+      opacity: 0.07;
+    }
+
+    .article-preview .ap-body .prizes-block h3 {
+      margin-top: 0;
+      color: var(--oro-dark);
+      border-bottom: none;
+    }
+
+    .article-preview .ap-body .prizes-block ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .article-preview .ap-body .prizes-block li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(179, 139, 89, 0.12);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .article-preview .ap-body .prizes-block li::before {
+      content: '▪';
+      color: var(--oro);
+      font-size: 0.7rem;
+    }
+
+    .article-preview .ap-body .prizes-block li:last-child {
+      border-bottom: none;
+    }
+
+    /* ============ SUCCESS STATE ============ */
+    .success-banner {
+      display: none;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border: 1px solid #86efac;
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-top: 16px;
+      animation: slideUp 0.4s ease;
+    }
+
+    .success-banner h4 {
+      color: var(--green-600);
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .success-banner p {
+      color: #15803d;
+      font-size: 0.85rem;
+    }
+
+    /* ============ SPINNER ============ */
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ============ UTILITIES ============ */
+    .hidden {
+      display: none !important;
+    }
+
+    .mt-4 {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==================== LOGIN ==================== -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="login-icon">♞</div>
+      <h1>Panel de Noticias</h1>
+      <p>Acceso restringido — Club de Ajedrez Alcalá</p>
+      <form id="loginForm">
+        <input type="password" class="login-input" id="loginPassword" placeholder="Contraseña" autofocus>
+        <button type="submit" class="login-btn">Acceder</button>
+        <p class="login-error" id="loginError">Contraseña incorrecta</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN PANEL ==================== -->
+  <div id="mainPanel">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-icon">♞</div>
+        <div>
+          <span>Panel Admin</span>
+          <h2>Generador de Noticias IA</h2>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="badge badge-success">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--green-500);display:inline-block;"></span>
+          Gemini conectado
+        </span>
+        <button class="btn-logout" onclick="logout()">Salir</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="panel-grid">
+
+        <!-- ===== LEFT: INPUT FORM ===== -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h3>📝 Datos del Evento</h3>
+              <div class="step-badge">1</div>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="categoria">Categoría</label>
+                <select id="categoria" class="form-select">
+                  <option value="Torneo">🏆 Torneo</option>
+                  <option value="Crónica">📖 Crónica</option>
+                  <option value="Resultados">📊 Resultados</option>
+                  <option value="Escuela">🎓 Escuela</option>
+                  <option value="Noticia">📰 Noticia General</option>
+                  <option value="Liga">⚔️ Liga</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="textoEnBruto">Texto en bruto del evento</label>
+                <textarea id="textoEnBruto" class="form-textarea"
+                  placeholder="Pega aquí toda la información del evento: resultados, clasificaciones, premios, nombres de participantes, fechas... Cuanta más información, mejor será el artículo que genere la IA."></textarea>
+                <div class="char-count"><span id="charCount">0</span> caracteres</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">
+              <h3>📷 Fotos del Evento</h3>
+              <div class="step-badge">2</div>
+            </div>
+            <div class="card-body">
+              <div class="dropzone" id="dropzone">
+                <div class="dropzone-icon">📁</div>
+                <p class="dropzone-text">Arrastra las fotos aquí</p>
+                <p class="dropzone-hint">o haz click para seleccionarlas · JPG, PNG, WEBP · Máx. 15MB</p>
+                <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,image/avif"
+                  style="display:none">
+              </div>
+              <div class="preview-grid" id="previewGrid"></div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button class="btn-generate" id="btnGenerate" onclick="generarNoticia()">
+              <span>🤖</span>
+              <span>Generar Artículo con IA</span>
+            </button>
+
+            <div class="progress-container" id="progressContainer">
+              <div class="progress-steps">
+                <div class="progress-step" id="step-upload">
+                  <div class="step-icon">☁️</div>
+                  <span>Subiendo fotos a Cloudinary...</span>
+                </div>
+                <div class="progress-step" id="step-ai">
+                  <div class="step-icon">🤖</div>
+                  <span>Gemini está redactando el artículo...</span>
+                </div>
+                <div class="progress-step" id="step-ready">
+                  <div class="step-icon">✅</div>
+                  <span>¡Artículo listo para revisión!</span>
+                </div>
+              </div>
+              <div class="timer-text" id="timerText"></div>
+            </div>
+
+            <div class="success-banner" id="successBanner">
+              <h4>🎉 ¡Artículo publicado con éxito!</h4>
+              <p>Ya es visible en la web del club.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== RIGHT: PREVIEW ===== -->
+        <div>
+          <div class="card" id="previewCard">
+            <div class="card-header">
+              <h3>👁️ Vista Previa</h3>
+              <div class="step-badge">3</div>
+            </div>
+
+            <!-- Empty state -->
+            <div class="card-body" id="previewEmpty">
+              <div class="preview-empty">
+                <div class="preview-empty-icon">✨</div>
+                <h4>Aquí aparecerá tu artículo</h4>
+                <p>Rellena los datos del evento y pulsa "Generar" para que la IA redacte la noticia automáticamente.</p>
+              </div>
+            </div>
+
+            <!-- Article preview -->
+            <div class="preview-panel" id="previewPanel">
+              <div class="edit-mode-banner">
+                <div class="edit-hint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Haz clic en cualquier texto para editarlo
+                </div>
+                <span style="font-size: 0.75rem; opacity: 0.7;">Los cambios se guardan automáticamente</span>
+              </div>
+              <div class="article-preview">
+                <div class="ap-header">
+                  <div class="ap-category" id="apCategory"></div>
+                  <div style="position:relative">
+                    <h2 class="ap-title editable" id="apTitle" contenteditable="true"></h2>
+                    <span class="editable-label">✏️ Título</span>
+                  </div>
+                  <div style="position:relative">
+                    <p class="ap-excerpt editable" id="apExcerpt" contenteditable="true"></p>
+                    <span class="editable-label">✏️ Resumen</span>
+                  </div>
+                </div>
+                <div class="ap-body-wrap">
+                  <div style="position:relative">
+                    <div class="ap-body editable" id="apBody" contenteditable="true"></div>
+                    <span class="editable-label">✏️ Contenido</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error state -->
+            <div class="error-display" id="errorDisplay">
+              <h4>❌ Error al generar el artículo</h4>
+              <p id="errorMessage"></p>
+              <pre id="errorDetail"></pre>
+            </div>
+          </div>
+
+          <div class="btn-row hidden" id="actionButtons">
+            <button class="btn-publish" onclick="publicar()">
+              <span>🚀</span>
+              <span>Publicar en la Web</span>
+            </button>
+            <button class="btn-secondary" onclick="regenerar()">🔄 Regenerar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== ARTICLE MANAGEMENT SECTION ===== -->
+    <div class="max-w-5xl mx-auto" id="manageSection" style="display:none; margin-top: 32px;">
+      <div class="card">
+        <div class="card-header" style="cursor:pointer" onclick="toggleArticleList()">
+          <h3>📚 Gestionar Artículos Publicados</h3>
+          <span id="manageToggle" style="font-size:1.2rem; transition:transform 0.3s">▼</span>
+        </div>
+        <div id="manageBody" style="display:none">
+          <div style="padding: 16px 24px; border-bottom: 1px solid #f3f4f6; display:flex; justify-content:space-between; align-items:center;">
+            <span id="articleCount" style="font-size: 0.85rem; color: #6b7280; font-weight: 600;">Cargando...</span>
+            <button onclick="cargarArticulos()" style="font-size: 0.85rem; color: #7a1f2b; font-weight: 700; background:none; border:none; cursor:pointer;">🔄 Refrescar</button>
+          </div>
+          <div id="articlesList" style="max-height: 600px; overflow-y: auto;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ============================================
+    // ESTADO DE LA APP
+    // ============================================
+    let currentPassword = '';
+    let selectedFiles = [];
+    let currentArticle = null;
+    let timerInterval = null;
+
+    // ============================================
+    // LOGIN
+    // ============================================
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pw = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+
+      try {
+        const resp = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pw }),
+        });
+
+        if (resp.ok) {
+          currentPassword = pw;
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('mainPanel').style.display = 'block';
+          document.getElementById('manageSection').style.display = 'block';
+          errorEl.style.display = 'none';
+        } else {
+          errorEl.style.display = 'block';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Error de conexión con el servidor';
+        errorEl.style.display = 'block';
+      }
+    });
+
+    function logout() {
+      currentPassword = '';
+      currentArticle = null;
+      document.getElementById('mainPanel').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('loginPassword').value = '';
+      resetForm();
+    }
+
+    // ============================================
+    // TEXTAREA COUNTER
+    // ============================================
+    document.getElementById('textoEnBruto').addEventListener('input', (e) => {
+      document.getElementById('charCount').textContent = e.target.value.length;
+    });
+
+    // ============================================
+    // DROPZONE & FILE HANDLING
+    // ============================================
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const previewGrid = document.getElementById('previewGrid');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      addFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => addFiles(e.target.files));
+
+    function addFiles(fileList) {
+      for (const file of fileList) {
+        if (file.type.startsWith('image/')) {
+          selectedFiles.push(file);
+        }
+      }
+      renderPreviews();
+    }
+
+    function removeFile(index) {
+      selectedFiles.splice(index, 1);
+      renderPreviews();
+    }
+
+    function renderPreviews() {
+      previewGrid.innerHTML = '';
+      selectedFiles.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const div = document.createElement('div');
+          div.className = 'preview-item';
+          div.innerHTML = `
+            <img src="${e.target.result}" alt="Foto ${i + 1}">
+            <button class="preview-remove" onclick="removeFile(${i})">✕</button>
+          `;
+          previewGrid.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ============================================
+    // TIMER
+    // ============================================
+    function startTimer() {
+      let seconds = 0;
+      const timerEl = document.getElementById('timerText');
+      timerEl.textContent = '⏱️ 0 segundos...';
+      timerInterval = setInterval(() => {
+        seconds++;
+        timerEl.textContent = `⏱️ ${seconds} segundo${seconds !== 1 ? 's' : ''}... (Gemini puede tardar hasta 60s)`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      document.getElementById('timerText').textContent = '';
+    }
+
+    // ============================================
+    // MOSTRAR / OCULTAR ERRORES
+    // ============================================
+    function showError(message, detail) {
+      const errorDisplay = document.getElementById('errorDisplay');
+      const errorMsg = document.getElementById('errorMessage');
+      const errorDet = document.getElementById('errorDetail');
+
+      errorMsg.textContent = message;
+      errorDet.textContent = detail || '';
+      errorDet.style.display = detail ? 'block' : 'none';
+
+      document.getElementById('previewEmpty').style.display = 'none';
+      document.getElementById('previewPanel').style.display = 'none';
+      errorDisplay.style.display = 'block';
+
+      document.getElementById('previewCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideError() {
+      document.getElementById('errorDisplay').style.display = 'none';
+    }
+
+    // ============================================
+    // GENERAR NOTICIA
+    // ============================================
+    async function generarNoticia() {
+      const textoEnBruto = document.getElementById('textoEnBruto').value.trim();
+      const categoria = document.getElementById('categoria').value;
+
+      if (!textoEnBruto || textoEnBruto.length < 10) {
+        showError('El texto es demasiado corto. Escribe al menos unas líneas sobre el evento.');
+        return;
+      }
+
+      const btn = document.getElementById('btnGenerate');
+      const progress = document.getElementById('progressContainer');
+
+      // UI: mostrar progreso
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generando...';
+      progress.style.display = 'block';
+      document.getElementById('successBanner').style.display = 'none';
+      document.getElementById('actionButtons').classList.add('hidden');
+      hideError();
+
+      // Empezar timer
+      startTimer();
+
+      // Steps animation
+      setStep(0);
+
+      console.log('[Panel] Iniciando generación de artículo...');
+      console.log('[Panel] Categoría:', categoria);
+      console.log('[Panel] Texto length:', textoEnBruto.length);
+      console.log('[Panel] Fotos:', selectedFiles.length);
+      console.log('[Panel] Password set:', !!currentPassword);
+
+      try {
+        // Prepare FormData
+        const formData = new FormData();
+        formData.append('textoEnBruto', textoEnBruto);
+        formData.append('categoria', categoria);
+        formData.append('password', currentPassword);
+        selectedFiles.forEach(f => formData.append('fotos', f));
+
+        // Upload step
+        if (selectedFiles.length > 0) {
+          setStep(0);
+          console.log('[Panel] Subiendo fotos...');
+        } else {
+          setStep(1);
+          console.log('[Panel] Sin fotos, directamente a IA...');
+        }
+
+        // Timeout de 2 minutos (Gemini + Cloudinary pueden tardar)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+        console.log('[Panel] Enviando petición a /api/generar-noticia...');
+
+        const resp = await fetch('/api/generar-noticia', {
+          method: 'POST',
+          body: formData,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        console.log('[Panel] Respuesta recibida. Status:', resp.status);
+
+        // Leer el body como texto primero para poder depurar
+        const responseText = await resp.text();
+        console.log('[Panel] Body recibido (primeros 500 chars):', responseText.substring(0, 500));
+
+        if (!resp.ok) {
+          let errorMsg = 'Error del servidor (HTTP ' + resp.status + ')';
+          try {
+            const errData = JSON.parse(responseText);
+            errorMsg = errData.error || errorMsg;
+          } catch (e) { }
+          throw new Error(errorMsg);
+        }
+
+        // Parsear la respuesta como JSON
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('[Panel] Error parseando respuesta:', parseError);
+          throw new Error('La respuesta del servidor no es JSON válido');
+        }
+
+        console.log('[Panel] Datos recibidos:', JSON.stringify(data).substring(0, 300));
+
+        if (!data.success || !data.articulo) {
+          throw new Error(data.error || 'La respuesta no contiene un artículo válido');
+        }
+
+        currentArticle = data.articulo;
+        console.log('[Panel] Artículo generado:', currentArticle.title);
+
+        // IA step done
+        setStep(1);
+        await sleep(300);
+
+        // Done step
+        setStep(2);
+        stopTimer();
+        await sleep(500);
+
+        // Show preview
+        showPreview(currentArticle);
+
+        // Reset button
+        btn.disabled = false;
+        btn.innerHTML = '<span>🤖</span><span>Generar Artículo con IA</span>';
+
+      } catch (error) {
+        console.error('[Panel] ERROR:', error);
+        stopTimer();
+
+        let errorDetail = '';
+        if (error.name === 'AbortError') {
+          showError('La solicitud tardó demasiado (más de 2 minutos). Intenta de nuevo con menos texto o fotos.', '');
+        } else {
+          showError(error.message, error.stack || '');
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<span>🤖</span><span>Generar Artículo con IA</span>';
+        progress.style.display = 'none';
+      }
+    }
+
+    function setStep(activeIndex) {
+      const steps = ['step-upload', 'step-ai', 'step-ready'];
+      steps.forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.classList.remove('active', 'done');
+        if (i < activeIndex) el.classList.add('done');
+        else if (i === activeIndex) el.classList.add('active');
+      });
+    }
+
+    function showPreview(article) {
+      console.log('[Panel] Mostrando vista previa...');
+
+      hideError();
+
+      document.getElementById('apCategory').textContent = article.category || 'Noticia';
+      document.getElementById('apTitle').textContent = article.title || 'Sin título';
+      document.getElementById('apExcerpt').textContent = article.excerpt || '';
+      document.getElementById('apBody').innerHTML = article.contentHtml || '<p>No se generó contenido HTML.</p>';
+
+      document.getElementById('previewEmpty').style.display = 'none';
+      document.getElementById('previewPanel').style.display = 'block';
+      document.getElementById('actionButtons').classList.remove('hidden');
+
+      // Scroll to preview
+      document.getElementById('previewCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Sincronizar ediciones del usuario con el artículo antes de publicar
+    function syncEditsToArticle() {
+      if (!currentArticle) return;
+      currentArticle.title = document.getElementById('apTitle').textContent.trim();
+      currentArticle.excerpt = document.getElementById('apExcerpt').textContent.trim();
+      currentArticle.contentHtml = document.getElementById('apBody').innerHTML;
+      console.log('[Panel] Ediciones sincronizadas con currentArticle');
+    }
+
+    // Auto-sync cuando el usuario termina de editar un campo
+    document.querySelectorAll('.editable').forEach(el => {
+      el.addEventListener('blur', syncEditsToArticle);
+    });
+
+    // ============================================
+    // PUBLICAR
+    // ============================================
+    async function publicar() {
+      if (!currentArticle) return;
+
+      // Sincronizar las ediciones del usuario
+      syncEditsToArticle();
+
+      const btn = document.querySelector('.btn-publish');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Publicando...';
+
+      try {
+        const resp = await fetch('/api/publicar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            articulo: currentArticle,
+            password: currentPassword,
+          }),
+        });
+
+        const responseText = await resp.text();
+
+        if (!resp.ok) {
+          let errorMsg = 'Error al publicar';
+          try { errorMsg = JSON.parse(responseText).error || errorMsg; } catch (e) { }
+          throw new Error(errorMsg);
+        }
+
+        // Success
+        document.getElementById('successBanner').style.display = 'block';
+        document.getElementById('actionButtons').classList.add('hidden');
+        document.getElementById('progressContainer').style.display = 'none';
+
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span><span>Publicar en la Web</span>';
+
+        // Reset after delay
+        setTimeout(() => {
+          resetForm();
+        }, 5000);
+
+      } catch (error) {
+        showError('Error al publicar: ' + error.message, '');
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span><span>Publicar en la Web</span>';
+      }
+    }
+
+    // ============================================
+    // REGENERAR
+    // ============================================
+    function regenerar() {
+      document.getElementById('previewPanel').style.display = 'none';
+      document.getElementById('previewEmpty').style.display = 'block';
+      document.getElementById('actionButtons').classList.add('hidden');
+      document.getElementById('progressContainer').style.display = 'none';
+      hideError();
+      currentArticle = null;
+      generarNoticia();
+    }
+
+    // ============================================
+    // UTILS
+    // ============================================
+    function resetForm() {
+      document.getElementById('textoEnBruto').value = '';
+      document.getElementById('charCount').textContent = '0';
+      selectedFiles = [];
+      previewGrid.innerHTML = '';
+      currentArticle = null;
+      document.getElementById('previewPanel').style.display = 'none';
+      document.getElementById('previewEmpty').style.display = 'block';
+      document.getElementById('actionButtons').classList.add('hidden');
+      document.getElementById('progressContainer').style.display = 'none';
+      document.getElementById('successBanner').style.display = 'none';
+      hideError();
+      stopTimer();
+
+      const btn = document.getElementById('btnGenerate');
+      btn.disabled = false;
+      btn.innerHTML = '<span>🤖</span><span>Generar Artículo con IA</span>';
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ============================================
+    // GESTIÓN DE ARTÍCULOS PUBLICADOS
+    // ============================================
+    let manageOpen = false;
+
+    function toggleArticleList() {
+      manageOpen = !manageOpen;
+      document.getElementById('manageBody').style.display = manageOpen ? 'block' : 'none';
+      document.getElementById('manageToggle').style.transform = manageOpen ? 'rotate(180deg)' : '';
+      if (manageOpen) cargarArticulos();
+    }
+
+    async function cargarArticulos() {
+      const list = document.getElementById('articlesList');
+      list.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af"><div class="spinner" style="margin:0 auto 12px"></div>Cargando artículos...</div>';
+
+      try {
+        const resp = await fetch('/api/articulos', {
+          headers: { 'x-admin-password': currentPassword }
+        });
+        if (!resp.ok) throw new Error('Error al cargar');
+        const data = await resp.json();
+        const arts = data.articulos;
+
+        document.getElementById('articleCount').textContent = `${arts.length} artículos publicados`;
+
+        if (arts.length === 0) {
+          list.innerHTML = '<div style="padding:40px;text-align:center;color:#9ca3af">No hay artículos publicados.</div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        arts.forEach(art => {
+          const date = art.createdAt ? new Date(art.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Sin fecha';
+          const el = document.createElement('div');
+          el.style.cssText = 'padding:16px 24px; border-bottom:1px solid #f3f4f6; display:flex; align-items:center; gap:16px; transition:background 0.2s;';
+          el.onmouseover = () => el.style.background = '#fafaf8';
+          el.onmouseout = () => el.style.background = '';
+          const safeTitle = (art.title || '').replace(/'/g, "\\'").substring(0, 40);
+          el.innerHTML = `
+            <div style="width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0;background:#f3f4f6;">
+              <img src="${art.imageUrl || ''}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:0.95rem;color:#22252a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${art.title}</div>
+              <div style="font-size:0.78rem;color:#9ca3af;margin-top:2px;display:flex;align-items:center;gap:8px;">
+                <span>${date}</span>
+                <span style="padding:2px 8px;background:rgba(179,139,89,0.12);color:#8a6d35;border-radius:10px;font-weight:700;font-size:0.7rem;text-transform:uppercase;">${art.category || 'Noticia'}</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+              <button onclick="editarArticulo('${art.id}')" title="Editar" style="width:36px;height:36px;border-radius:10px;border:1px solid #e5e7eb;background:white;cursor:pointer;font-size:1rem;transition:all 0.2s;">✏️</button>
+              <button onclick="eliminarArticulo('${art.id}','${safeTitle}')" title="Eliminar" style="width:36px;height:36px;border-radius:10px;border:1px solid #fecaca;background:#fef2f2;cursor:pointer;font-size:1rem;transition:all 0.2s;">🗑️</button>
+            </div>
+          `;
+          list.appendChild(el);
+        });
+      } catch (err) {
+        list.innerHTML = `<div style="padding:24px;text-align:center;color:#991b1b">Error: ${err.message}</div>`;
+      }
+    }
+
+    let editingArticleId = null;
+
+    async function editarArticulo(id) {
+      try {
+        const resp = await fetch('/api/articulos', {
+          headers: { 'x-admin-password': currentPassword }
+        });
+        const data = await resp.json();
+        const art = data.articulos.find(a => a.id === id);
+        if (!art) return alert('Artículo no encontrado');
+
+        editingArticleId = id;
+        currentArticle = {
+          title: art.title,
+          excerpt: art.excerpt,
+          contentHtml: art.contentHtml,
+          category: art.category,
+          imageUrl: art.imageUrl,
+        };
+        showPreview(currentArticle);
+
+        const actionBtns = document.getElementById('actionButtons');
+        actionBtns.classList.remove('hidden');
+        actionBtns.innerHTML = `
+          <button class="btn-publish" onclick="guardarEdicion()">
+            <span>✅</span>
+            <span>Guardar Cambios</span>
+          </button>
+          <button class="btn-secondary" onclick="cancelarEdicion()">❌ Cancelar</button>
+        `;
+
+        document.getElementById('previewCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        alert('Error al cargar: ' + err.message);
+      }
+    }
+
+    async function guardarEdicion() {
+      if (!editingArticleId || !currentArticle) return;
+      syncEditsToArticle();
+
+      const btn = document.querySelector('.btn-publish');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Guardando...';
+
+      try {
+        const resp = await fetch(`/api/articulos/${editingArticleId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            password: currentPassword,
+            articulo: currentArticle,
+          }),
+        });
+
+        if (!resp.ok) throw new Error('Error al guardar');
+
+        btn.innerHTML = '✅ Guardado!';
+        btn.style.background = '#16a34a';
+        editingArticleId = null;
+        setTimeout(() => {
+          cancelarEdicion();
+          cargarArticulos();
+        }, 1500);
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✅</span><span>Guardar Cambios</span>';
+        alert('Error: ' + err.message);
+      }
+    }
+
+    function cancelarEdicion() {
+      editingArticleId = null;
+      document.getElementById('previewPanel').style.display = 'none';
+      document.getElementById('previewEmpty').style.display = 'block';
+      const actionBtns = document.getElementById('actionButtons');
+      actionBtns.classList.add('hidden');
+      actionBtns.innerHTML = `
+        <button class="btn-publish" onclick="publicar()">
+          <span>🚀</span>
+          <span>Publicar en la Web</span>
+        </button>
+        <button class="btn-secondary" onclick="regenerar()">🔄 Regenerar</button>
+      `;
+    }
+
+    async function eliminarArticulo(id, title) {
+      if (!confirm(`¿Seguro que quieres eliminar "${title}..."?\n\nEsta acción no se puede deshacer.`)) return;
+
+      try {
+        const resp = await fetch(`/api/articulos/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-password': currentPassword },
+        });
+
+        if (!resp.ok) throw new Error('Error al eliminar');
+        cargarArticulos();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+  </script>
+
+</body>
+
+</html>

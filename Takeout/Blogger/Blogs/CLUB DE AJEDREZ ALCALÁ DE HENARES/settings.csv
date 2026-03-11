@@ -1,0 +1,15 @@
+blog_publishing_mode,blog_admin_permission,blog_author_permission,blog_reader_permission,blog_by_post_archiving,blog_name,blog_description,blog_send_email,blog_adult_content,blog_analytics_account_number,blog_archive_date_format,blog_date_format,blog_time_stamp_format,blog_archive_frequency,blog_locale,blog_time_zone,blog_read_access_mode,blog_use_lightbox,blog_per_post_feed,blog_post_feed,blog_convert_line_breaks,blog_ideas_panel_opt_out,blog_feed_redirect_url,blog_subdomain,blog_float_alignment,blog_searchable,blog_email_post_links,blog_max_num,blog_max_unit,blog_show_url,blog_quick_editing,blog_comment_access,blog_comment_captcha,blog_comment_email,blog_comment_feed,blog_comment_form_location,blog_comment_moderation,blog_comment_moderation_delay,blog_comment_moderation_email,blog_comment_profile_images,blog_comments_allowed,blog_comments_time_stamp_format,blog_default_comments_mode,blog_comment_message,blog_custom_ads_txt,blog_custom_ads_txt_enabled,blog_custom_page_not_found,blog_custom_robots_txt,blog_custom_robots_txt_enabled,blog_meta_description,blog_meta_description_enabled,blog_post_feed_footer,blog_post_template,blog_jump_text,email_for_posting,publish_email_posts,visible_on_profile_page,stats_timeframe,navbar_type,web_fonts,current_layout_type,show_mobile_view,mobile_skin,mobile_skin_variant,adsense_prefs
+HOSTED,"jorgemayora88@gmail.com,azabartefj@gmail.com",,,true,CLUB DE AJEDREZ ALCALÁ DE HENARES,"Ajedrez para todos y todas
+
+
+
+
+
+",,false,,,26,15,MONTHLY,es,Europe/Madrid,PUBLIC,true,FULL,FULL,,,,ajedrezalcaladehenares,true,true,true,13,POSTS,true,false,BLOGGER,true,,FULL,EMBEDDED_IFRAME,DISABLED,14,,true,true,29,DEFAULT_HAVE_COMMENTS,Puedes realizar tu comentario siempre que sea con educación y respeto,,false,,,false,"Ajedrez en Alcalá de Henares. Información de Torneos, Clases, Club de Ajedrez de Alcalá, Liga de Madrid.
+Torneo ajedrez alcalá",true,,,Sigue leyendo »,,,,ALL_TIME,LIGHT,"web_fonts {
+  font_name: ""Open Sans""
+}
+web_fonts {
+  font_name: ""Calibri""
+}
+",LAYOUTS,false,,,

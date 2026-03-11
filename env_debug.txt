@@ -1,0 +1,17 @@
+# ============================================
+# Panel de Noticias - Variables de Entorno
+# ============================================
+
+# Google Gemini AI
+GEMINI_API_KEY=AIzaSyACSbNneVo_hOxIvtyjCPBMkGwFpB4TKQQ
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=dn8uibrmc
+CLOUDINARY_API_KEY=516711389237698
+CLOUDINARY_API_SECRET=G_6ShiGpz3X5fyW1rwILAX9Sy2I
+
+# Contraseña del panel de administración
+ADMIN_PASSWORD=ajedrez2026
+
+# Puerto del servidor
+PORT=3000
