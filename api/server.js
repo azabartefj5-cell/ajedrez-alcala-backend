@@ -26,12 +26,27 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Firebase Admin (reutiliza la instancia si ya fue inicializada por otro script)
+// Firebase Admin (soporta archivo local o variable de entorno para Vercel)
 if (!admin.apps.length) {
-    const serviceAccount = require(path.join(__dirname, '..', 'firebase-adminsdk.json'));
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-    });
+    try {
+        if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+            // En producción (Vercel), leemos desde variable de entorno
+            const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+            });
+            console.log('✅ Firebase inicializado desde variable de entorno');
+        } else {
+            // En local, leemos desde el archivo JSON
+            const serviceAccount = require(path.join(__dirname, '..', 'firebase-adminsdk.json'));
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+            });
+            console.log('✅ Firebase inicializado desde archivo local');
+        }
+    } catch (e) {
+        console.error('❌ Error inicializando Firebase:', e.message);
+    }
 }
 const db = admin.firestore();
 
