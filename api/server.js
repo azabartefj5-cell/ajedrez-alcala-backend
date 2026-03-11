@@ -77,6 +77,11 @@ const upload = multer({
 // 3. RUTAS
 // ============================================
 
+// --- Redirección raíz a admin ---
+app.get('/', (req, res) => {
+    res.redirect('/admin');
+});
+
 // --- Servir el panel de administración ---
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'admin.html'));

@@ -12,8 +12,8 @@
       "dest": "/api/server.js"
     },
     {
-      "src": "/admin",
-      "dest": "/admin.html"
+      "src": "/(.*)",
+      "dest": "/api/server.js"
     }
   ]
 }
