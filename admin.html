@@ -1475,12 +1475,40 @@
       console.log('[Panel] Password set:', !!currentPassword);
 
       try {
+        // Función para comprimir imágenes (evita el límite de 4.5MB de Vercel)
+        async function compressImage(file, maxWidth = 1200, quality = 0.8) {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                canvas.toBlob((blob) => {
+                  resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                }, 'image/jpeg', quality);
+              };
+              img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        // Comprimir fotos antes de enviar
+        const compressedFiles = await Promise.all(
+          selectedFiles.map(f => compressImage(f))
+        );
+        console.log('[Panel] Fotos comprimidas:', compressedFiles.map(f => (f.size/1024).toFixed(0) + 'KB'));
+
         // Prepare FormData
         const formData = new FormData();
         formData.append('textoEnBruto', textoEnBruto);
         formData.append('categoria', categoria);
         formData.append('password', currentPassword);
-        selectedFiles.forEach(f => formData.append('fotos', f));
+        compressedFiles.forEach(f => formData.append('fotos', f));
 
         // Upload step
         if (selectedFiles.length > 0) {
